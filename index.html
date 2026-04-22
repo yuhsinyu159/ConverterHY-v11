@@ -562,6 +562,16 @@
         }
     }
 
+    // --- 獨立的單字刪除邏輯 ---
+    function deleteSingleChar() {
+        if (currentInputValue.length > 1) {
+            currentInputValue = currentInputValue.slice(0, -1);
+        } else {
+            currentInputValue = "0";
+        }
+        updateDisplayAndConvert();
+    }
+
     let deleteTimer;
     function startDelete(e) {
         if(e) e.preventDefault();
@@ -578,12 +588,8 @@
         if(e) e.preventDefault();
         if (deleteTimer) {
             clearTimeout(deleteTimer);
-            if (currentInputValue.length > 1) {
-                currentInputValue = currentInputValue.slice(0, -1);
-            } else {
-                currentInputValue = "0";
-            }
-            updateDisplayAndConvert();
+            deleteTimer = null; // 清除殘留狀態
+            deleteSingleChar();
         }
     }
 
@@ -598,7 +604,6 @@
 
     // --- 實體鍵盤監聽與視覺回饋 ---
     document.addEventListener('keydown', (e) => {
-        // 如果焦點在原生下拉選單上，保留瀏覽器預設的鍵盤跳轉選項功能
         if (document.activeElement.tagName === 'SELECT') return;
 
         const key = e.key;
@@ -616,8 +621,7 @@
         }
         else if (key === 'Backspace') {
             e.preventDefault();
-            // 直接呼叫單次刪除邏輯
-            endDelete(null); 
+            deleteSingleChar(); // 直接呼叫單字刪除，不經過長按邏輯
             triggerButtonVisual('⌫');
             return;
         }
@@ -629,13 +633,12 @@
         }
 
         if (mappedKey) {
-            e.preventDefault(); // 防止按鍵觸發瀏覽器其他行為
+            e.preventDefault();
             pressKey(mappedKey);
             triggerButtonVisual(mappedKey);
         }
     });
 
-    // 觸發畫面上按鈕的按壓動畫
     function triggerButtonVisual(keyLabel) {
         const buttons = document.querySelectorAll('.key-btn');
         buttons.forEach(btn => {
