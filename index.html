@@ -37,7 +37,55 @@
             position: relative;
         }
 
-        /* 背景流動光暈 */
+        /* --- 啟動畫面 (Splash Screen) --- */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100dvh;
+            background-color: #050505;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease-out, visibility 0.5s;
+        }
+
+        .splash-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .splash-logo {
+            animation: pulse 2s infinite ease-in-out;
+            margin-bottom: 60px;
+        }
+
+        .splash-text {
+            position: absolute;
+            bottom: 50px;
+            font-size: 13px;
+            color: #888888;
+            letter-spacing: 2px;
+            animation: fadeInOut 1.5s infinite ease-in-out;
+            padding-bottom: env(safe-area-inset-bottom); /* 適配 iPhone 底部海苔條 */
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        /* --- 背景流動光暈 --- */
         .blob {
             position: absolute;
             filter: blur(90px);
@@ -238,8 +286,6 @@
         }
         
         .key-equals:active { background: linear-gradient(135deg, #006ee6, #4c4acc); }
-        
-        /* 讓0和刪除鍵維持佔據兩格，拿掉=的兩格設定 */
         .key-zero { grid-column: span 2; }
 
         /* --- 橫向螢幕鎖定提示 --- */
@@ -286,6 +332,24 @@
     </style>
 </head>
 <body>
+
+<div id="splashScreen" class="splash-screen">
+    <div class="splash-logo">
+        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="url(#paint0_linear_splash)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 6V18" stroke="url(#paint0_linear_splash)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M9.5 9.5H13.5C14.3284 9.5 15 10.1716 15 11C15 11.8284 14.3284 12.5 13.5 12.5H10.5C9.67157 12.5 9 13.1716 9 14C9 14.8284 9.67157 15.5 10.5 15.5H14.5" stroke="url(#paint0_linear_splash)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4.92993 4.92993L7.75993 7.75993" stroke="url(#paint0_linear_splash)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M19.07 19.07L16.24 16.24" stroke="url(#paint0_linear_splash)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <defs>
+                <linearGradient id="paint0_linear_splash" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#FFFFFF"/><stop offset="1" stop-color="#666666"/>
+                </linearGradient>
+            </defs>
+        </svg>
+    </div>
+    <div class="splash-text">正在獲取最新匯率...</div>
+</div>
 
 <div class="portrait-lock-overlay">
     <div class="portrait-lock-icon">📱</div>
@@ -424,11 +488,15 @@
     }
 
     async function fetchLiveRates() {
+        // 為了讓啟動畫面有更好的 UX，強制至少顯示 1.5 秒
+        const minSplashTime = new Promise(resolve => setTimeout(resolve, 1500));
+        
         try {
-            const [fiatRes, btcRes, paxgRes] = await Promise.all([
+            const [fiatRes, btcRes, paxgRes, _] = await Promise.all([
                 fetch('https://open.er-api.com/v6/latest/USD'),
                 fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT'),
-                fetch('https://api.binance.com/api/v3/ticker/price?symbol=PAXGUSDT') 
+                fetch('https://api.binance.com/api/v3/ticker/price?symbol=PAXGUSDT'),
+                minSplashTime
             ]);
 
             const fiatData = await fiatRes.json();
@@ -457,8 +525,12 @@
             statusText.style.color = "rgba(255, 255, 255, 0.4)";
             processConversion();
         } catch (error) {
+            await minSplashTime; // 就算錯誤也要等時間跑完
             statusText.textContent = "🔴 無法連線，使用備用匯率";
             statusText.style.color = "#ff4d4d";
+        } finally {
+            // 隱藏啟動畫面
+            document.getElementById('splashScreen').classList.add('hidden');
         }
     }
 
@@ -499,8 +571,7 @@
             }
         } catch (e) {}
     }
-    
-    // 新增 C (歸零) 函式
+
     function clearAll() {
         hapticFeedback('light');
         currentInputValue = "0";
