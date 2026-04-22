@@ -71,7 +71,7 @@
             color: #888888;
             letter-spacing: 2px;
             animation: fadeInOut 1.5s infinite ease-in-out;
-            padding-bottom: env(safe-area-inset-bottom); /* 適配 iPhone 底部海苔條 */
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         @keyframes pulse {
@@ -382,21 +382,27 @@
             <select id="fromCurrency">
                 <option value="USD">🇺🇸 美金 (USD)</option>
                 <option value="TWD" selected>🇹🇼 新台幣 (TWD)</option>
-                <option value="CNY">🇨🇳 人民幣 (CNY)</option>
                 <option value="HKD">🇭🇰 港幣 (HKD)</option>
-                <option value="JPY">🇯🇵 日幣 (JPY)</option>
+                <option value="CNY">🇨🇳 人民幣 (CNY)</option>
+                <option value="PHP">🇵🇭 菲律賓比索 (PHP)</option>
                 <option value="KRW">🇰🇷 韓元 (KRW)</option>
+                <option value="JPY">🇯🇵 日幣 (JPY)</option>
                 <option value="VND">🇻🇳 越南盾 (VND)</option>
                 <option value="THB">🇹🇭 泰銖 (THB)</option>
-                <option value="SGD">🇸🇬 新加坡幣 (SGD)</option>
                 <option value="MYR">🇲🇾 令吉 (MYR)</option>
+                <option value="SGD">🇸🇬 新加坡幣 (SGD)</option>
+                <option value="IDR">🇮🇩 印尼盾 (IDR)</option>
+                <option value="INR">🇮🇳 印度盧比 (INR)</option>
+                <option value="AUD">🇦🇺 澳幣 (AUD)</option>
+                <option value="NZD">🇳🇿 紐西蘭幣 (NZD)</option>
+                <option value="RUB">🇷🇺 盧布 (RUB)</option>
                 <option value="EUR">🇪🇺 歐元 (EUR)</option>
+                <option value="CHF">🇨🇭 瑞士法郎 (CHF)</option>
                 <option value="GBP">🇬🇧 英鎊 (GBP)</option>
                 <option value="CAD">🇨🇦 加幣 (CAD)</option>
-                <option value="AUD">🇦🇺 澳幣 (AUD)</option>
-                <option value="RUB">🇷🇺 盧布 (RUB)</option>
                 <option value="XAU">🪙 黃金 (XAU)</option>
                 <option value="BTC">₿ 比特幣 (BTC)</option>
+                <option value="ETH">Ξ 以太幣 (ETH)</option>
             </select>
         </div>
         
@@ -406,21 +412,27 @@
             <select id="toCurrency">
                 <option value="USD" selected>🇺🇸 美金 (USD)</option>
                 <option value="TWD">🇹🇼 新台幣 (TWD)</option>
-                <option value="CNY">🇨🇳 人民幣 (CNY)</option>
                 <option value="HKD">🇭🇰 港幣 (HKD)</option>
-                <option value="JPY">🇯🇵 日幣 (JPY)</option>
+                <option value="CNY">🇨🇳 人民幣 (CNY)</option>
+                <option value="PHP">🇵🇭 菲律賓比索 (PHP)</option>
                 <option value="KRW">🇰🇷 韓元 (KRW)</option>
+                <option value="JPY">🇯🇵 日幣 (JPY)</option>
                 <option value="VND">🇻🇳 越南盾 (VND)</option>
                 <option value="THB">🇹🇭 泰銖 (THB)</option>
-                <option value="SGD">🇸🇬 新加坡幣 (SGD)</option>
                 <option value="MYR">🇲🇾 令吉 (MYR)</option>
+                <option value="SGD">🇸🇬 新加坡幣 (SGD)</option>
+                <option value="IDR">🇮🇩 印尼盾 (IDR)</option>
+                <option value="INR">🇮🇳 印度盧比 (INR)</option>
+                <option value="AUD">🇦🇺 澳幣 (AUD)</option>
+                <option value="NZD">🇳🇿 紐西蘭幣 (NZD)</option>
+                <option value="RUB">🇷🇺 盧布 (RUB)</option>
                 <option value="EUR">🇪🇺 歐元 (EUR)</option>
+                <option value="CHF">🇨🇭 瑞士法郎 (CHF)</option>
                 <option value="GBP">🇬🇧 英鎊 (GBP)</option>
                 <option value="CAD">🇨🇦 加幣 (CAD)</option>
-                <option value="AUD">🇦🇺 澳幣 (AUD)</option>
-                <option value="RUB">🇷🇺 盧布 (RUB)</option>
                 <option value="XAU">🪙 黃金 (XAU)</option>
                 <option value="BTC">₿ 比特幣 (BTC)</option>
+                <option value="ETH">Ξ 以太幣 (ETH)</option>
             </select>
         </div>
     </div>
@@ -464,10 +476,11 @@
 
 <script>
     let exchangeRates = {
-        USD: 1.0, TWD: 32.0, CNY: 7.2, HKD: 7.8, JPY: 150.0, 
-        KRW: 1350.0, VND: 25400.0, THB: 36.8, SGD: 1.36, MYR: 4.78, 
-        EUR: 0.92, GBP: 0.79, CAD: 1.37, AUD: 1.53, RUB: 93.0, 
-        XAU: 0.00042, BTC: 0.000015
+        USD: 1.0, TWD: 32.0, HKD: 7.8, CNY: 7.2, PHP: 56.0, 
+        KRW: 1350.0, JPY: 150.0, VND: 25400.0, THB: 36.8, MYR: 4.78, 
+        SGD: 1.36, IDR: 16000.0, INR: 83.0, AUD: 1.53, NZD: 1.65, 
+        RUB: 93.0, EUR: 0.92, CHF: 0.90, GBP: 0.79, CAD: 1.37, 
+        XAU: 0.00042, BTC: 0.000015, ETH: 0.0003
     };
 
     const amountInput = document.getElementById('amount');
@@ -488,19 +501,20 @@
     }
 
     async function fetchLiveRates() {
-        // 為了讓啟動畫面有更好的 UX，強制至少顯示 1.5 秒
         const minSplashTime = new Promise(resolve => setTimeout(resolve, 1500));
         
         try {
-            const [fiatRes, btcRes, paxgRes, _] = await Promise.all([
+            const [fiatRes, btcRes, ethRes, paxgRes, _] = await Promise.all([
                 fetch('https://open.er-api.com/v6/latest/USD'),
                 fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT'),
+                fetch('https://api.binance.com/api/v3/ticker/price?symbol=ETHUSDT'),
                 fetch('https://api.binance.com/api/v3/ticker/price?symbol=PAXGUSDT'),
                 minSplashTime
             ]);
 
             const fiatData = await fiatRes.json();
             const btcData = await btcRes.json();
+            const ethData = await ethRes.json();
             const paxgData = await paxgRes.json();
 
             if (fiatData.result === "success") {
@@ -512,10 +526,16 @@
                 exchangeRates.MYR = r.MYR; exchangeRates.EUR = r.EUR;
                 exchangeRates.GBP = r.GBP; exchangeRates.CAD = r.CAD;
                 exchangeRates.AUD = r.AUD; exchangeRates.RUB = r.RUB;
+                exchangeRates.PHP = r.PHP; exchangeRates.IDR = r.IDR;
+                exchangeRates.INR = r.INR; exchangeRates.NZD = r.NZD;
+                exchangeRates.CHF = r.CHF;
             }
             
             if (btcData && btcData.price) {
                 exchangeRates.BTC = 1 / parseFloat(btcData.price);
+            }
+            if (ethData && ethData.price) {
+                exchangeRates.ETH = 1 / parseFloat(ethData.price);
             }
             if (paxgData && paxgData.price) {
                 exchangeRates.XAU = 1 / parseFloat(paxgData.price);
@@ -525,11 +545,10 @@
             statusText.style.color = "rgba(255, 255, 255, 0.4)";
             processConversion();
         } catch (error) {
-            await minSplashTime; // 就算錯誤也要等時間跑完
+            await minSplashTime; 
             statusText.textContent = "🔴 無法連線，使用備用匯率";
             statusText.style.color = "#ff4d4d";
         } finally {
-            // 隱藏啟動畫面
             document.getElementById('splashScreen').classList.add('hidden');
         }
     }
@@ -599,7 +618,9 @@
         const toC = toSelect.value;
         const amountInUSD = amount / exchangeRates[fromC];
         const finalAmount = amountInUSD * exchangeRates[toC];
-        if (toC === 'BTC' || toC === 'XAU') {
+        
+        // 針對比特幣、黃金與新增的以太幣，顯示到小數點後 6 位
+        if (toC === 'BTC' || toC === 'ETH' || toC === 'XAU') {
             resultDisplay.textContent = finalAmount.toFixed(6);
         } else {
             resultDisplay.textContent = finalAmount.toLocaleString('en-US', {
