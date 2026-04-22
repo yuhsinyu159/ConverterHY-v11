@@ -16,15 +16,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
         body { background-color: #050505; min-height: 100dvh; display: flex; justify-content: center; align-items: center; color: #ffffff; overflow: hidden; position: relative; }
         
-        /* 原版橫向鎖定遮罩 */
-        #orientation-lock { 
-            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; 
-            background: rgba(5, 5, 5, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
-            z-index: 50000; color: #ffffff; text-align: center; flex-direction: column; justify-content: center; align-items: center; 
-        }
-        .portrait-lock-icon { font-size: 50px; margin-bottom: 20px; animation: tiltPhone 2s infinite ease-in-out; }
-        @keyframes tiltPhone { 0%, 100% { transform: rotate(-90deg); } 50% { transform: rotate(0deg); } }
-
         /* 背景流動光暈 */
         .blob { position: absolute; filter: blur(90px); z-index: 0; opacity: 0.65; animation: moveBlob 18s infinite alternate ease-in-out; }
         .blob-1 { width: 350px; height: 350px; background: linear-gradient(135deg, #5e2b97, #1a1025); top: -5%; left: -10%; }
@@ -40,37 +31,53 @@
             background: rgba(10, 10, 10, 0.45); backdrop-filter: blur(30px) saturate(200%); -webkit-backdrop-filter: blur(30px) saturate(200%); 
             border: 1px solid rgba(255, 255, 255, 0.05); opacity: 0; transform: scale(0.96); animation: panelFadeIn 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; 
         }
+        
+        /* 電腦版/大螢幕適配 */
+        @media (min-width: 481px) { 
+            .glass-panel { height: 90vh; max-height: 850px; border-radius: 40px; box-shadow: 0 40px 80px rgba(0,0,0,0.8); } 
+        }
         @keyframes panelFadeIn { to { opacity: 1; transform: scale(1); } }
 
-        .header-container { display: flex; align-items: center; justify-content: space-between; margin-top: 5px; margin-bottom: 15px; padding: 0 5px; }
+        .header-container { display: flex; align-items: center; justify-content: space-between; margin-top: 5px; margin-bottom: 15px; padding: 0 5px; flex-shrink: 0; }
         .logo-box { display: flex; align-items: center; gap: 10px; }
         h2 { font-size: 24px; font-weight: 700; background: linear-gradient(135deg, #ffffff, #888888); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .settings-btn { font-size: 22px; cursor: pointer; color: #ffffff; opacity: 0.8; padding: 5px; }
+        .settings-btn { font-size: 22px; cursor: pointer; color: #ffffff; opacity: 0.8; padding: 5px; transition: 0.2s; }
 
-        .input-row { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
-        select, input { width: 100%; padding: 12px 6px; font-size: 14px; color: #ffffff; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; outline: none; appearance: none; text-align: center; text-align-last: center; }
+        .input-row { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-shrink: 0; }
+        select, input { width: 100%; padding: 12px 6px; font-size: 14px; color: #ffffff; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; outline: none; appearance: none; text-align: center; text-align-last: center; cursor: pointer; }
         input { text-align: right; font-size: 28px; font-weight: 600; color: #0a84ff; background: rgba(0, 0, 0, 0.3); pointer-events: none; padding: 14px 18px; }
-        .swap-btn { display: flex; justify-content: center; align-items: center; width: 42px; height: 42px; border-radius: 14px; background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer; flex-shrink: 0; }
+        .swap-btn { display: flex; justify-content: center; align-items: center; width: 42px; height: 42px; border-radius: 14px; background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.2); cursor: pointer; flex-shrink: 0; transition: transform 0.1s; }
+        .swap-btn:active { transform: scale(0.85); }
         
-        .result-container { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .result-amount { font-size: 46px; font-weight: 800; text-align: center; background: linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .result-container { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 60px; }
+        .result-amount { font-size: 46px; font-weight: 800; text-align: center; word-break: break-all; background: linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
-        .status-text { text-align: center; font-size: 11px; color: rgba(255,255,255,0.4); margin-bottom: 10px; }
+        .status-text { text-align: center; font-size: 11px; color: rgba(255,255,255,0.4); margin-bottom: 10px; flex-shrink: 0; }
 
-        .keypad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding-bottom: 10px; }
-        .key-btn { background: rgba(255, 255, 255, 0.08); border-radius: 22px; padding: 16px 0; font-size: 26px; color: #ffffff; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: all 0.1s; border: 1px solid rgba(255,255,255,0.05); }
+        .keypad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding-bottom: 10px; flex-shrink: 0; }
+        .key-btn { background: rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 15px 0; font-size: 26px; color: #ffffff; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: all 0.1s; border: 1px solid rgba(255,255,255,0.05); }
         .key-btn:active { background: rgba(255, 255, 255, 0.2); transform: scale(0.95); }
         .operator { background: rgba(10, 132, 255, 0.15); color: #5e5ce6; font-weight: 600; }
         .key-delete { color: #ff453a; }
         .key-equals { background: linear-gradient(135deg, #0a84ff, #5e5ce6); color: white; grid-column: span 2; border: none; }
         .key-zero { grid-column: span 2; }
 
-        /* 自選選單間距調整 */
+        /* 自選選單 */
         #selector-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background: rgba(5, 5, 5, 0.98); z-index: 20000; padding: calc(env(safe-area-inset-top) + 30px) 20px 40px 20px; display: none; overflow-y: auto; }
         .selector-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .currency-item { display: flex; align-items: center; justify-content: space-between; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 14px; margin-bottom: 10px; }
+        .currency-item { display: flex; align-items: center; justify-content: space-between; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 14px; margin-bottom: 10px; cursor: pointer; }
         .currency-item.active { border: 1px solid #0a84ff; background: rgba(10, 132, 255, 0.12); }
-        .save-btn { background: #0a84ff; color: white; border: none; padding: 10px 22px; border-radius: 18px; font-weight: 600; }
+        .save-btn { background: #0a84ff; color: white; border: none; padding: 10px 22px; border-radius: 18px; font-weight: 600; cursor: pointer; }
+
+        /* 純 CSS 橫向鎖定 (僅限觸控設備 + 橫向時觸發) */
+        #orientation-lock { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background: rgba(5, 5, 5, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 50000; color: #ffffff; text-align: center; flex-direction: column; justify-content: center; align-items: center; }
+        .portrait-lock-icon { font-size: 50px; margin-bottom: 20px; animation: tiltPhone 2s infinite ease-in-out; }
+        @keyframes tiltPhone { 0%, 100% { transform: rotate(-90deg); } 50% { transform: rotate(0deg); } }
+
+        @media (hover: none) and (pointer: coarse) and (orientation: landscape) {
+            #orientation-lock { display: flex; }
+            .glass-panel, #splash-screen, #selector-overlay { display: none !important; }
+        }
     </style>
 </head>
 <body>
@@ -121,9 +128,7 @@
     </div>
     
     <div style="margin-bottom: 12px;"><input type="text" id="amount" value="0" readonly></div>
-    
     <div class="result-container"><div class="result-amount" id="result">0.00</div></div>
-    
     <div id="status" class="status-text">正在獲取匯率...</div>
     
     <div class="keypad">
@@ -146,7 +151,7 @@
         { code: "CHF", name: "🇨🇭 瑞士法郎" }, { code: "GBP", name: "🇬🇧 英鎊" },
         { code: "EUR", name: "🇪🇺 歐元" }, { code: "CAD", name: "🇨🇦 加幣" },
         { code: "RUB", name: "🇷🇺 盧布" }, { code: "XAU", name: "🪙 黃金" },
-        { code: "BTC", name: "₿ 比特幣" }, { code: "ETH", name: "💠 以太幣" }
+        { code: "BTC", name: "₿ 比特幣" }, { code: "ETH", name: "Ξ 以太幣" }
     ];
 
     let userSelection = JSON.parse(localStorage.getItem('myCurrencies')) || ["USD", "TWD", "JPY", "CNY", "HKD", "EUR"];
@@ -157,17 +162,20 @@
     const toSelect = document.getElementById('toCurrency');
     const resultDisplay = document.getElementById('result');
     const amountInput = document.getElementById('amount');
-    const lockOverlay = document.getElementById('orientation-lock');
 
-    function checkOrientation() {
-        if (window.innerWidth > window.innerHeight) {
-            lockOverlay.style.display = 'flex';
-        } else {
-            lockOverlay.style.display = 'none';
-        }
-    }
-    window.addEventListener('resize', checkOrientation);
-    checkOrientation();
+    // 實體鍵盤支援
+    window.addEventListener('keydown', (e) => {
+        if (document.getElementById('selector-overlay').style.display === 'block') return;
+        const key = e.key;
+        if (/[0-9.]/.test(key)) pressKey(key);
+        else if (key === '+') pressKey('+');
+        else if (key === '-') pressKey('-');
+        else if (key === '*' || key.toLowerCase() === 'x') pressKey('×');
+        else if (key === '/') pressKey('÷');
+        else if (key === 'Enter' || key === '=') calculateMathResult();
+        else if (key === 'Backspace') deleteOne();
+        else if (key === 'Escape') { currentInputValue = "0"; updateDisplayAndConvert(); }
+    });
 
     function renderSelects() {
         const fromVal = fromSelect.value || "TWD";
@@ -256,8 +264,13 @@
         else if (!(ops.includes(key) && ops.includes(currentInputValue.slice(-1)))) {
             if (currentInputValue.length < 18) currentInputValue += key;
         }
-        amountInput.value = currentInputValue;
-        processConversion();
+        updateDisplayAndConvert();
+    }
+
+    function deleteOne() {
+        hapticFeedback('light');
+        currentInputValue = currentInputValue.length > 1 ? currentInputValue.slice(0, -1) : "0";
+        updateDisplayAndConvert();
     }
 
     function calculateMathResult() {
@@ -266,10 +279,14 @@
             let res = eval(currentInputValue.replace(/×/g, '*').replace(/÷/g, '/'));
             if (isFinite(res)) {
                 currentInputValue = String(Math.round(res * 1000000) / 1000000);
-                amountInput.value = currentInputValue;
-                processConversion();
+                updateDisplayAndConvert();
             }
         } catch (e) {}
+    }
+
+    function updateDisplayAndConvert() {
+        amountInput.value = currentInputValue;
+        processConversion();
     }
 
     function processConversion() {
@@ -282,7 +299,14 @@
     }
 
     document.getElementById('swapBtn').onclick = () => { hapticFeedback('light'); [fromSelect.value, toSelect.value] = [toSelect.value, fromSelect.value]; processConversion(); };
-    document.getElementById('deleteBtn').onclick = () => { hapticFeedback('light'); currentInputValue = currentInputValue.length > 1 ? currentInputValue.slice(0, -1) : "0"; amountInput.value = currentInputValue; processConversion(); };
+    
+    // 綁定刪除按鈕
+    document.getElementById('deleteBtn').onclick = deleteOne;
+    
+    // 長按刪除全部
+    let delTimer;
+    document.getElementById('deleteBtn').addEventListener('touchstart', (e) => { e.preventDefault(); delTimer = setTimeout(() => { currentInputValue="0"; updateDisplayAndConvert(); hapticFeedback('heavy'); }, 800); });
+    document.getElementById('deleteBtn').addEventListener('touchend', (e) => { e.preventDefault(); clearTimeout(delTimer); deleteOne(); });
 
     renderSelects();
     fetchLiveRates();
