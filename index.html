@@ -3,331 +3,503 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Currency">
-    <meta name="theme-color" content="#000000">
-    <title>Currency</title>
+    <meta name="theme-color" content="#050505">
     
+    <title>Currency</title>
+
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='4' fill='%23050505'/%3E%3Cpath d='M12 21C16.9 21 21 16.9 21 12C21 7.1 16.9 3 12 3C7.1 3 3 7.1 3 12C3 16.9 7.1 21 12 21Z' stroke='%23ffffff' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M12 6V18' stroke='%23ffffff' stroke-width='1.5' stroke-linecap='round'/%3E%3Cpath d='M9.5 9.5H13.5C14.3 9.5 15 10.2 15 11C15 11.8 14.3 12.5 13.5 12.5H10.5C9.7 12.5 9 13.2 9 14C9 14.8 9.7 15.5 10.5 15.5H14.5' stroke='%23ffffff' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M5.6 5.6L8.4 8.4' stroke='%23ffffff' stroke-width='1.5' stroke-linecap='round'/%3E%3Cpath d='M18.4 18.4L15.6 15.6' stroke='%23ffffff' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E">
+    
     <link rel="apple-touch-icon" href="https://ui-avatars.com/api/?name=%E2%82%AC&background=050505&color=fff&size=512&font-size=0.7&bold=true">
 
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
-        
-        /* 鎖死底層 (防癲癇閃爍) + 從上至下的深色漸層 (修復黑邊) */
-        body { 
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            user-select: none; 
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
             background-color: #050505;
-            background: linear-gradient(180deg, #131022 0%, #050505 70%, #000000 100%);
-            display: flex; justify-content: center; align-items: center; 
-            color: #ffffff; overflow: hidden; touch-action: none; 
+            min-height: 100dvh; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+            overflow: hidden;
+            position: relative;
         }
 
-        /* 完美還原 v11 版本的背景流動光暈 */
-        .blob { position: absolute; filter: blur(90px); z-index: 0; opacity: 0.65; animation: moveBlob 18s infinite alternate ease-in-out; }
-        .blob-1 { width: 350px; height: 350px; background: linear-gradient(135deg, #5e2b97, #1a1025); top: -5%; left: -10%; }
-        .blob-2 { width: 300px; height: 300px; background: linear-gradient(135deg, #154e7a, #0a192f); bottom: -5%; right: -10%; animation-delay: -7s; }
-        @keyframes moveBlob { 0% { transform: translate(0, 0) scale(1); } 50% { transform: translate(60px, 40px) scale(1.15); } 100% { transform: translate(-40px, -60px) scale(0.85); } }
-
-        /* 同步漸層的啟動畫面 */
-        #splash-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background: linear-gradient(180deg, #131022 0%, #050505 70%, #000000 100%); z-index: 10000; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s ease, visibility 0.8s; }
-
-        /* 還原 v11 的主畫面玻璃面板 */
-        .glass-panel { 
-            position: relative; z-index: 10; width: 100%; max-width: 480px; height: 100dvh; 
-            display: flex; flex-direction: column; padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom) 20px; 
-            background: rgba(10, 10, 10, 0.45); backdrop-filter: blur(30px) saturate(200%); -webkit-backdrop-filter: blur(30px) saturate(200%); 
-            border: 1px solid rgba(255, 255, 255, 0.05); opacity: 0; transform: scale(0.96); animation: panelFadeIn 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; 
+        /* 背景流動光暈 */
+        .blob {
+            position: absolute;
+            filter: blur(90px);
+            z-index: 0;
+            opacity: 0.65;
+            animation: moveBlob 18s infinite alternate ease-in-out;
         }
-        @media (min-width: 480px) { .glass-panel { height: 90vh; border-radius: 40px; box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1); margin: 20px 0; } }
-        @keyframes panelFadeIn { to { opacity: 1; transform: scale(1); } }
+        .blob-1 {
+            width: 350px;
+            height: 350px;
+            background: linear-gradient(135deg, #5e2b97, #1a1025);
+            top: -5%;
+            left: -10%;
+        }
+        .blob-2 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #154e7a, #0a192f);
+            bottom: -5%;
+            right: -10%;
+            animation-delay: -7s;
+        }
 
-        /* 標題與按鈕排版 */
-        .header-container { display: flex; align-items: center; justify-content: space-between; margin-top: 5px; margin-bottom: 15px; padding: 0 5px; }
-        .logo-box { display: flex; align-items: center; gap: 10px; }
-        h2 { font-size: 24px; font-weight: 700; letter-spacing: 1px; background: linear-gradient(135deg, #ffffff, #888888); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .settings-btn { font-size: 22px; cursor: pointer; color: #ffffff; opacity: 0.8; padding: 5px; transition: transform 0.2s; }
-        .settings-btn:active { transform: rotate(45deg); opacity: 1; }
+        @keyframes moveBlob {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(60px, 40px) scale(1.15); }
+            100% { transform: translate(-40px, -60px) scale(0.85); }
+        }
 
-        /* 完美還原 v11 的輸入區與結果區 */
+        /* 主畫面玻璃面板 */
+        .glass-panel {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 480px;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom) 20px;
+            background: rgba(10, 10, 10, 0.45);
+            backdrop-filter: blur(30px) saturate(200%);
+            -webkit-backdrop-filter: blur(30px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        @media (min-width: 480px) {
+            .glass-panel {
+                height: 90vh;
+                border-radius: 40px;
+                box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+                margin: 20px 0;
+            }
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #ffffff, #888888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
         .input-group { margin-bottom: 12px; }
-        .input-row { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
-        select, input { width: 100%; padding: 12px 6px; font-size: 14px; color: #ffffff; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; outline: none; appearance: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); text-align: center; text-align-last: center; cursor: pointer; }
+
+        select, input {
+            width: 100%;
+            padding: 12px 6px;
+            font-size: 14px;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            outline: none;
+            appearance: none;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            text-align: center;
+            text-align-last: center; 
+        }
+
         select option { background-color: #1a1a1a; color: #fff; }
-        input { text-align: right; font-size: 28px; font-weight: 600; color: #0a84ff; background: rgba(0, 0, 0, 0.3); pointer-events: none; letter-spacing: 1px; padding: 14px 18px; }
-        
-        .swap-btn { display: flex; justify-content: center; align-items: center; width: 42px; height: 42px; border-radius: 14px; background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.2); color: #fff; font-size: 22px; cursor: pointer; transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 10px rgba(0,0,0,0.2); flex-shrink: 0; }
-        .swap-btn:active { transform: scale(0.8); background: rgba(255, 255, 255, 0.3); }
 
-        .result-container { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; background: transparent; margin-bottom: 10px; }
-        .result-amount { font-size: 46px; font-weight: 800; text-align: center; word-wrap: break-word; max-width: 100%; background: linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .status-text { text-align: center; font-size: 11px; color: #ffcc00; margin-bottom: 10px; }
+        input {
+            text-align: right;
+            font-size: 28px;
+            font-weight: 600;
+            color: #0a84ff;
+            background: rgba(0, 0, 0, 0.3);
+            pointer-events: none;
+            letter-spacing: 1px;
+            padding: 14px 18px;
+        }
 
-        /* 還原 v11 鍵盤樣式 */
-        .keypad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding-bottom: 10px; }
-        .key-btn { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 22px; box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.2), 0 4px 12px rgba(0, 0, 0, 0.2); padding: 16px 0; font-size: 26px; font-weight: 500; color: #ffffff; cursor: pointer; transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1); display: flex; justify-content: center; align-items: center; }
-        .key-btn:active { background: rgba(255, 255, 255, 0.25); transform: scale(0.92); box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3); }
-        .operator { background: rgba(10, 132, 255, 0.15); color: #5e5ce6; font-weight: 600; }
+        .swap-btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 22px;
+            cursor: pointer;
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            flex-shrink: 0;
+        }
+
+        .swap-btn:active {
+            transform: scale(0.8);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .result-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: transparent;
+            margin-bottom: 10px;
+        }
+
+        .result-amount {
+            font-size: 46px;
+            font-weight: 800;
+            text-align: center;
+            word-wrap: break-word;
+            max-width: 100%;
+            background: linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status-text {
+            text-align: center;
+            font-size: 11px;
+            color: #ffcc00;
+            margin-bottom: 10px;
+        }
+
+        /* 鍵盤樣式 */
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            padding-bottom: 10px;
+        }
+
+        .key-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 22px; 
+            box-shadow: 
+                inset 0 1px 2px rgba(255, 255, 255, 0.2), 
+                0 4px 12px rgba(0, 0, 0, 0.2);
+            padding: 16px 0;
+            font-size: 26px;
+            font-weight: 500;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .key-btn:active {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(0.92);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .operator {
+            background: rgba(10, 132, 255, 0.15);
+            color: #5e5ce6;
+            font-weight: 600;
+        }
+
         .operator:active { background: rgba(10, 132, 255, 0.35); }
         .key-delete { color: #ff453a; }
-        .key-equals { background: linear-gradient(135deg, #0a84ff, #5e5ce6); color: white; border: none; box-shadow: 0 8px 20px rgba(10, 132, 255, 0.3); }
+        
+        .key-equals {
+            background: linear-gradient(135deg, #0a84ff, #5e5ce6);
+            color: white;
+            border: none;
+            box-shadow: 0 8px 20px rgba(10, 132, 255, 0.3);
+        }
+        
         .key-equals:active { background: linear-gradient(135deg, #006ee6, #4c4acc); }
         .key-zero { grid-column: span 2; }
         .key-equals { grid-column: span 2; }
 
-        /* 自選選單與橫向鎖定 */
-        #selector-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background: rgba(0, 0, 0, 0.98); z-index: 20000; padding: calc(env(safe-area-inset-top) + 30px) 20px 40px 20px; display: none; overflow-y: auto; touch-action: pan-y; -webkit-overflow-scrolling: touch; }
-        .selector-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .currency-item { display: flex; align-items: center; justify-content: space-between; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 14px; margin-bottom: 10px; cursor: pointer; }
-        .currency-item.active { border: 1px solid #0a84ff; background: rgba(10, 132, 255, 0.12); }
-        .save-btn { background: #0a84ff; color: white; border: none; padding: 10px 22px; border-radius: 18px; font-weight: 600; cursor: pointer; }
+        /* --- 橫向螢幕鎖定提示 --- */
+        .portrait-lock-overlay {
+            display: none; 
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100dvh;
+            background: rgba(5, 5, 5, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 9999; 
+            color: #ffffff;
+            text-align: center;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
 
-        #orientation-lock { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background: rgba(5, 5, 5, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 50000; color: #ffffff; text-align: center; flex-direction: column; justify-content: center; align-items: center; }
-        .portrait-lock-icon { font-size: 50px; margin-bottom: 20px; animation: tiltPhone 2s infinite ease-in-out; }
-        @keyframes tiltPhone { 0%, 100% { transform: rotate(-90deg); } 50% { transform: rotate(0deg); } }
-        @media screen and (orientation: landscape) and (max-height: 500px) {
-            #orientation-lock { display: flex !important; }
-            .glass-panel, #splash-screen, #selector-overlay { display: none !important; }
+        .portrait-lock-icon {
+            font-size: 50px;
+            margin-bottom: 20px;
+            animation: tiltPhone 2s infinite ease-in-out;
+        }
+
+        .portrait-lock-text {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            line-height: 1.5;
+            background: linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        @keyframes tiltPhone {
+            0%, 100% { transform: rotate(-90deg); }
+            50% { transform: rotate(0deg); }
+        }
+
+        /* 如果是觸控設備且螢幕橫向時，顯示提示並隱藏主畫面 */
+        @media (hover: none) and (pointer: coarse) and (orientation: landscape) {
+            .portrait-lock-overlay {
+                display: flex;
+            }
+            .glass-panel {
+                display: none; 
+            }
         }
     </style>
 </head>
 <body>
 
-<div id="orientation-lock">
+<div class="portrait-lock-overlay">
     <div class="portrait-lock-icon">📱</div>
-    <p style="font-weight: 600; font-size: 20px; letter-spacing: 2px; background: linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">請將手機轉回直向<br>以獲得最佳體驗</p>
-</div>
-
-<div id="splash-screen">
-    <div style="margin-bottom: 20px;">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M12 6V18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M9.5 9.5H13.5C14.3284 9.5 15 10.1716 15 11C15 11.8284 14.3284 12.5 13.5 12.5H10.5C9.67157 12.5 9 13.1716 9 14C9 14.8284 9.67157 15.5 10.5 15.5H14.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-    </div>
-    <h2>Currency</h2>
-    <div style="margin-top:10px;color:rgba(255,255,255,0.4);font-size:13px;letter-spacing:1.5px;">正在同步全球匯率...</div>
-</div>
-
-<div id="selector-overlay">
-    <div class="selector-header">
-        <h3 style="letter-spacing: 1px;">選擇顯示貨幣</h3>
-        <button class="save-btn" onclick="saveSelectedCurrencies()">完成</button>
-    </div>
-    <div id="currency-list"></div>
+    <div class="portrait-lock-text">請將手機轉回直向<br>以獲得最佳體驗</div>
 </div>
 
 <div class="blob blob-1"></div>
 <div class="blob blob-2"></div>
 
 <div class="glass-panel">
+    
     <div class="header-container">
-        <div class="logo-box">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="url(#paint0_linear)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M12 6V18" stroke="url(#paint0_linear)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M9.5 9.5H13.5C14.3284 9.5 15 10.1716 15 11C15 11.8284 14.3284 12.5 13.5 12.5H10.5C9.67157 12.5 9 13.1716 9 14C9 14.8284 9.67157 15.5 10.5 15.5H14.5" stroke="url(#paint0_linear)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M4.92993 4.92993L7.75993 7.75993" stroke="url(#paint0_linear)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M19.07 19.07L16.24 16.24" stroke="url(#paint0_linear)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <defs>
-                    <linearGradient id="paint0_linear" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
-                        <stop stop-color="#FFFFFF"/><stop offset="1" stop-color="#888888"/>
-                    </linearGradient>
-                </defs>
-            </svg>
-            <h2>Currency</h2>
-        </div>
-        <div class="settings-btn" onclick="openSelector()">⚙️</div>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="url(#paint0_linear)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 6V18" stroke="url(#paint0_linear)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M9.5 9.5H13.5C14.3284 9.5 15 10.1716 15 11C15 11.8284 14.3284 12.5 13.5 12.5H10.5C9.67157 12.5 9 13.1716 9 14C9 14.8284 9.67157 15.5 10.5 15.5H14.5" stroke="url(#paint0_linear)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4.92993 4.92993L7.75993 7.75993" stroke="url(#paint0_linear)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M19.07 19.07L16.24 16.24" stroke="url(#paint0_linear)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <defs>
+                <linearGradient id="paint0_linear" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#FFFFFF"/><stop offset="1" stop-color="#888888"/>
+                </linearGradient>
+            </defs>
+        </svg>
+        <h2>Currency</h2>
     </div>
 
-    <div class="input-row">
-        <div style="flex: 1;"><select id="fromCurrency"></select></div>
+    <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 12px;">
+        <div class="input-group" style="flex: 1; margin-bottom: 0;">
+            <select id="fromCurrency">
+                <option value="USD">🇺🇸 美金 (USD)</option>
+                <option value="TWD" selected>🇹🇼 新台幣 (TWD)</option>
+                <option value="CNY">🇨🇳 人民幣 (CNY)</option>
+                <option value="HKD">🇭🇰 港幣 (HKD)</option>
+                <option value="JPY">🇯🇵 日幣 (JPY)</option>
+                <option value="KRW">🇰🇷 韓元 (KRW)</option>
+                <option value="VND">🇻🇳 越南盾 (VND)</option>
+                <option value="THB">🇹🇭 泰銖 (THB)</option>
+                <option value="SGD">🇸🇬 新加坡幣 (SGD)</option>
+                <option value="MYR">🇲🇾 令吉 (MYR)</option>
+                <option value="EUR">🇪🇺 歐元 (EUR)</option>
+                <option value="GBP">🇬🇧 英鎊 (GBP)</option>
+                <option value="CAD">🇨🇦 加幣 (CAD)</option>
+                <option value="AUD">🇦🇺 澳幣 (AUD)</option>
+                <option value="RUB">🇷🇺 盧布 (RUB)</option>
+                <option value="XAU">🪙 黃金 (XAU)</option>
+                <option value="BTC">₿ 比特幣 (BTC)</option>
+            </select>
+        </div>
+        
         <div id="swapBtn" class="swap-btn">⇄</div>
-        <div style="flex: 1;"><select id="toCurrency"></select></div>
+        
+        <div class="input-group" style="flex: 1; margin-bottom: 0;">
+            <select id="toCurrency">
+                <option value="USD" selected>🇺🇸 美金 (USD)</option>
+                <option value="TWD">🇹🇼 新台幣 (TWD)</option>
+                <option value="CNY">🇨🇳 人民幣 (CNY)</option>
+                <option value="HKD">🇭🇰 港幣 (HKD)</option>
+                <option value="JPY">🇯🇵 日幣 (JPY)</option>
+                <option value="KRW">🇰🇷 韓元 (KRW)</option>
+                <option value="VND">🇻🇳 越南盾 (VND)</option>
+                <option value="THB">🇹🇭 泰銖 (THB)</option>
+                <option value="SGD">🇸🇬 新加坡幣 (SGD)</option>
+                <option value="MYR">🇲🇾 令吉 (MYR)</option>
+                <option value="EUR">🇪🇺 歐元 (EUR)</option>
+                <option value="GBP">🇬🇧 英鎊 (GBP)</option>
+                <option value="CAD">🇨🇦 加幣 (CAD)</option>
+                <option value="AUD">🇦🇺 澳幣 (AUD)</option>
+                <option value="RUB">🇷🇺 盧布 (RUB)</option>
+                <option value="XAU">🪙 黃金 (XAU)</option>
+                <option value="BTC">₿ 比特幣 (BTC)</option>
+            </select>
+        </div>
     </div>
-    
+
     <div class="input-group">
         <input type="text" id="amount" value="0" readonly>
     </div>
-    
+
     <div class="result-container">
         <div class="result-amount" id="result">0.00</div>
     </div>
-    
-    <div id="status" class="status-text">正在獲取匯率...</div>
-    
+
+    <div class="status-text" id="status">正在獲取最新匯率...</div>
+
     <div class="keypad">
         <div class="key-btn" onclick="pressKey('7')">7</div>
         <div class="key-btn" onclick="pressKey('8')">8</div>
         <div class="key-btn" onclick="pressKey('9')">9</div>
         <div class="key-btn operator" onclick="pressKey('÷')">÷</div>
+
         <div class="key-btn" onclick="pressKey('4')">4</div>
         <div class="key-btn" onclick="pressKey('5')">5</div>
         <div class="key-btn" onclick="pressKey('6')">6</div>
         <div class="key-btn operator" onclick="pressKey('×')">×</div>
+
         <div class="key-btn" onclick="pressKey('1')">1</div>
         <div class="key-btn" onclick="pressKey('2')">2</div>
         <div class="key-btn" onclick="pressKey('3')">3</div>
         <div class="key-btn operator" onclick="pressKey('-')">-</div>
+
         <div class="key-btn key-zero" onclick="pressKey('0')">0</div>
         <div class="key-btn" onclick="pressKey('.')">.</div>
         <div class="key-btn operator" onclick="pressKey('+')">+</div>
+
         <div class="key-btn key-delete key-zero" id="deleteBtn">⌫</div>
         <div class="key-btn key-equals" onclick="calculateMathResult()">=</div>
     </div>
+
 </div>
 
 <script>
-    const allCurrencies = [
-        { code: "USD", name: "🇺🇸 美金" }, { code: "TWD", name: "🇹🇼 新台幣" },
-        { code: "CNY", name: "🇨🇳 人民幣" }, { code: "HKD", name: "🇭🇰 港幣" },
-        { code: "JPY", name: "🇯🇵 日幣" }, { code: "KRW", name: "🇰🇷 韓元" },
-        { code: "VND", name: "🇻🇳 越南盾" }, { code: "THB", name: "🇹🇭 泰銖" },
-        { code: "SGD", name: "🇸🇬 新加坡幣" }, { code: "MYR", name: "🇲🇾 令吉" },
-        { code: "NZD", name: "🇳🇿 紐西蘭幣" }, { code: "AUD", name: "🇦🇺 澳幣" },
-        { code: "CHF", name: "🇨🇭 瑞士法郎" }, { code: "GBP", name: "🇬🇧 英鎊" },
-        { code: "EUR", name: "🇪🇺 歐元" }, { code: "CAD", name: "🇨🇦 加幣" },
-        { code: "RUB", name: "🇷🇺 盧布" }, { code: "XAU", name: "🪙 黃金" },
-        { code: "BTC", name: "₿ 比特幣" }, { code: "ETH", name: "Ξ 以太幣" }
-    ];
+    let exchangeRates = {
+        USD: 1.0, TWD: 32.0, CNY: 7.2, HKD: 7.8, JPY: 150.0, 
+        KRW: 1350.0, VND: 25400.0, THB: 36.8, SGD: 1.36, MYR: 4.78, 
+        EUR: 0.92, GBP: 0.79, CAD: 1.37, AUD: 1.53, RUB: 93.0, 
+        XAU: 0.00042, BTC: 0.000015
+    };
 
-    let userSelection = JSON.parse(localStorage.getItem('myCurrencies')) || ["USD", "TWD", "JPY", "CNY", "HKD", "EUR"];
-    let exchangeRates = { USD: 1.0 };
-    let currentInputValue = "0";
-
+    const amountInput = document.getElementById('amount');
     const fromSelect = document.getElementById('fromCurrency');
     const toSelect = document.getElementById('toCurrency');
     const resultDisplay = document.getElementById('result');
-    const amountInput = document.getElementById('amount');
     const statusText = document.getElementById('status');
+    const deleteBtn = document.getElementById('deleteBtn');
+    const swapBtn = document.getElementById('swapBtn');
+    
+    let currentInputValue = "0";
 
-    // 解決變更下拉選單不更新的問題
-    fromSelect.addEventListener('change', processConversion);
-    toSelect.addEventListener('change', processConversion);
-
-    // 實體鍵盤支援
-    window.addEventListener('keydown', (e) => {
-        if (document.getElementById('selector-overlay').style.display === 'block') return;
-        const key = e.key;
-        if (/[0-9.]/.test(key)) pressKey(key);
-        else if (key === '+') pressKey('+');
-        else if (key === '-') pressKey('-');
-        else if (key === '*' || key.toLowerCase() === 'x') pressKey('×');
-        else if (key === '/') pressKey('÷');
-        else if (key === 'Enter' || key === '=') { e.preventDefault(); calculateMathResult(); }
-        else if (key === 'Backspace') deleteOne();
-        else if (key === 'Escape') { currentInputValue = "0"; updateDisplayAndConvert(); }
-    });
-
-    function renderSelects() {
-        const fromVal = fromSelect.value || "TWD";
-        const toVal = toSelect.value || "USD";
-        fromSelect.innerHTML = ""; toSelect.innerHTML = "";
-        allCurrencies.forEach(c => {
-            if (userSelection.includes(c.code)) {
-                const opt = `<option value="${c.code}">${c.name} (${c.code})</option>`;
-                fromSelect.innerHTML += opt; toSelect.innerHTML += opt;
-            }
-        });
-        fromSelect.value = userSelection.includes(fromVal) ? fromVal : userSelection[0];
-        toSelect.value = userSelection.includes(toVal) ? toVal : userSelection[1];
-        processConversion();
-    }
-
-    function openSelector() {
-        hapticFeedback('light');
-        const listDiv = document.getElementById('currency-list');
-        listDiv.innerHTML = "";
-        allCurrencies.forEach(c => {
-            const isActive = userSelection.includes(c.code);
-            listDiv.innerHTML += `
-                <div class="currency-item ${isActive ? 'active' : ''}" onclick="toggleCurrency('${c.code}', this)">
-                    <span>${c.name}</span>
-                    <span style="font-size: 18px;">${isActive ? '✅' : '➕'}</span>
-                </div>`;
-        });
-        document.getElementById('selector-overlay').style.display = 'block';
-    }
-
-    function toggleCurrency(code, el) {
-        hapticFeedback('light');
-        if (userSelection.includes(code)) {
-            if (userSelection.length <= 2) return;
-            userSelection = userSelection.filter(c => c !== code);
-            el.classList.remove('active'); el.lastElementChild.innerText = '➕';
-        } else {
-            userSelection.push(code);
-            el.classList.add('active'); el.lastElementChild.innerText = '✅';
+    function hapticFeedback(type = 'light') {
+        if (navigator.vibrate) {
+            if (type === 'light') navigator.vibrate(15);
+            if (type === 'heavy') navigator.vibrate([40, 20, 40]);
         }
-    }
-
-    function saveSelectedCurrencies() {
-        hapticFeedback('heavy');
-        localStorage.setItem('myCurrencies', JSON.stringify(userSelection));
-        document.getElementById('selector-overlay').style.display = 'none';
-        renderSelects();
     }
 
     async function fetchLiveRates() {
         try {
-            const [fiat, btc, eth, paxg] = await Promise.all([
+            const [fiatRes, btcRes, paxgRes] = await Promise.all([
                 fetch('https://open.er-api.com/v6/latest/USD'),
                 fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT'),
-                fetch('https://api.binance.com/api/v3/ticker/price?symbol=ETHUSDT'),
-                fetch('https://api.binance.com/api/v3/ticker/price?symbol=PAXGUSDT')
+                fetch('https://api.binance.com/api/v3/ticker/price?symbol=PAXGUSDT') 
             ]);
-            const fiatData = await fiat.json();
-            Object.assign(exchangeRates, fiatData.rates);
-            exchangeRates.BTC = 1 / parseFloat((await btc.json()).price);
-            exchangeRates.ETH = 1 / parseFloat((await eth.json()).price);
-            exchangeRates.XAU = 1 / parseFloat((await paxg.json()).price);
+
+            const fiatData = await fiatRes.json();
+            const btcData = await btcRes.json();
+            const paxgData = await paxgRes.json();
+
+            if (fiatData.result === "success") {
+                const r = fiatData.rates;
+                exchangeRates.TWD = r.TWD; exchangeRates.CNY = r.CNY;
+                exchangeRates.HKD = r.HKD; exchangeRates.JPY = r.JPY;
+                exchangeRates.KRW = r.KRW; exchangeRates.VND = r.VND;
+                exchangeRates.THB = r.THB; exchangeRates.SGD = r.SGD;
+                exchangeRates.MYR = r.MYR; exchangeRates.EUR = r.EUR;
+                exchangeRates.GBP = r.GBP; exchangeRates.CAD = r.CAD;
+                exchangeRates.AUD = r.AUD; exchangeRates.RUB = r.RUB;
+            }
             
+            if (btcData && btcData.price) {
+                exchangeRates.BTC = 1 / parseFloat(btcData.price);
+            }
+            if (paxgData && paxgData.price) {
+                exchangeRates.XAU = 1 / parseFloat(paxgData.price);
+            }
+
             statusText.textContent = "🟢 即時匯率已同步";
             statusText.style.color = "rgba(255, 255, 255, 0.4)";
-            closeSplash();
             processConversion();
-        } catch (e) { 
+        } catch (error) {
             statusText.textContent = "🔴 無法連線，使用備用匯率";
             statusText.style.color = "#ff4d4d";
-            closeSplash();
         }
     }
 
-    function closeSplash() {
-        const sp = document.getElementById('splash-screen');
-        setTimeout(() => { sp.style.opacity = '0'; setTimeout(() => sp.style.visibility = 'hidden', 800); }, 600);
-    }
-
-    function hapticFeedback(type = 'light') {
-        if (navigator.vibrate) { type === 'light' ? navigator.vibrate(15) : navigator.vibrate([40, 20, 40]); }
-    }
+    // 切換按鈕
+    swapBtn.addEventListener('click', () => {
+        hapticFeedback('light');
+        const temp = fromSelect.value;
+        fromSelect.value = toSelect.value;
+        toSelect.value = temp;
+        processConversion();
+    });
 
     function pressKey(key) {
         hapticFeedback('light');
-        const ops = ['+', '-', '×', '÷'];
-        const last = currentInputValue.slice(-1);
-        if (currentInputValue === "0" && !ops.includes(key) && key !== ".") {
-            currentInputValue = key;
-        } else if (!(ops.includes(key) && ops.includes(last))) {
-            if (currentInputValue.length < 18) currentInputValue += key;
-        }
-        updateDisplayAndConvert();
-    }
+        const operators = ['+', '-', '×', '÷'];
+        const lastChar = currentInputValue.slice(-1);
 
-    function deleteOne() {
-        hapticFeedback('light');
-        currentInputValue = currentInputValue.length > 1 ? currentInputValue.slice(0, -1) : "0";
+        if (currentInputValue === "0" && !operators.includes(key) && key !== ".") {
+            currentInputValue = key; 
+        } else {
+            if (operators.includes(key) && operators.includes(lastChar)) {
+                currentInputValue = currentInputValue.slice(0, -1) + key;
+            } else {
+                if (currentInputValue.length < 20) currentInputValue += key;
+            }
+        }
         updateDisplayAndConvert();
     }
 
     function calculateMathResult() {
         hapticFeedback('heavy');
         try {
-            let res = eval(currentInputValue.replace(/×/g, '*').replace(/÷/g, '/'));
-            if (isFinite(res)) {
-                currentInputValue = String(Math.round(res * 100000000) / 100000000);
+            let mathExpr = currentInputValue.replace(/×/g, '*').replace(/÷/g, '/');
+            let result = eval(mathExpr);
+            result = Math.round(result * 100000000) / 100000000;
+            if (isFinite(result)) {
+                currentInputValue = String(result);
                 updateDisplayAndConvert();
             }
         } catch (e) {}
@@ -340,29 +512,67 @@
 
     function processConversion() {
         try {
-            let val = eval(currentInputValue.replace(/×/g, '*').replace(/÷/g, '/'));
-            if (!isFinite(val)) return;
-            const fromR = exchangeRates[fromSelect.value];
-            const toR = exchangeRates[toSelect.value];
-            const final = (val / fromR) * toR;
-            const crypto = ['BTC', 'ETH', 'XAU'];
-            resultDisplay.textContent = crypto.includes(toSelect.value) ? final.toFixed(6) : final.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            let mathExpr = currentInputValue.replace(/×/g, '*').replace(/÷/g, '/');
+            let evaluatedAmount = eval(mathExpr);
+            
+            if (isFinite(evaluatedAmount)) {
+                doCurrencyMath(evaluatedAmount);
+            }
         } catch (e) {}
     }
 
-    document.getElementById('swapBtn').onclick = () => { hapticFeedback('light'); [fromSelect.value, toSelect.value] = [toSelect.value, fromSelect.value]; processConversion(); };
-    
-    // 綁定刪除按鈕與長按清空
-    let delTimer;
-    const delBtn = document.getElementById('deleteBtn');
-    delBtn.addEventListener('touchstart', (e) => { e.preventDefault(); delTimer = setTimeout(() => { currentInputValue="0"; updateDisplayAndConvert(); hapticFeedback('heavy'); delTimer=null; }, 600); }, {passive: false});
-    delBtn.addEventListener('touchend', (e) => { e.preventDefault(); if(delTimer){ clearTimeout(delTimer); deleteOne(); } }, {passive: false});
-    delBtn.addEventListener('mousedown', () => { delTimer = setTimeout(() => { currentInputValue="0"; updateDisplayAndConvert(); hapticFeedback('heavy'); delTimer=null; }, 600); });
-    delBtn.addEventListener('mouseup', () => { if(delTimer){ clearTimeout(delTimer); deleteOne(); } });
-    delBtn.addEventListener('mouseleave', () => { if(delTimer) clearTimeout(delTimer); });
+    function doCurrencyMath(amount) {
+        const fromC = fromSelect.value;
+        const toC = toSelect.value;
+        const amountInUSD = amount / exchangeRates[fromC];
+        const finalAmount = amountInUSD * exchangeRates[toC];
 
-    renderSelects();
+        if (toC === 'BTC' || toC === 'XAU') {
+            resultDisplay.textContent = finalAmount.toFixed(6);
+        } else {
+            resultDisplay.textContent = finalAmount.toLocaleString('en-US', {
+                minimumFractionDigits: 2, maximumFractionDigits: 2
+            });
+        }
+    }
+
+    let deleteTimer;
+    
+    function startDelete(e) {
+        e.preventDefault();
+        hapticFeedback('light');
+        deleteTimer = setTimeout(() => {
+            currentInputValue = "0";
+            updateDisplayAndConvert();
+            hapticFeedback('heavy');
+            deleteTimer = null;
+        }, 600);
+    }
+
+    function endDelete(e) {
+        e.preventDefault();
+        if (deleteTimer) {
+            clearTimeout(deleteTimer); 
+            if (currentInputValue.length > 1) {
+                currentInputValue = currentInputValue.slice(0, -1);
+            } else {
+                currentInputValue = "0";
+            }
+            updateDisplayAndConvert();
+        }
+    }
+
+    deleteBtn.addEventListener('touchstart', startDelete, {passive: false});
+    deleteBtn.addEventListener('touchend', endDelete, {passive: false});
+    deleteBtn.addEventListener('mousedown', startDelete);
+    deleteBtn.addEventListener('mouseup', endDelete);
+    deleteBtn.addEventListener('mouseleave', () => { if(deleteTimer) clearTimeout(deleteTimer); });
+
+    fromSelect.addEventListener('change', processConversion);
+    toSelect.addEventListener('change', processConversion);
+
     fetchLiveRates();
 </script>
+
 </body>
 </html>
